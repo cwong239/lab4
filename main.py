@@ -21,6 +21,8 @@ class MaxHeap:
         '''returns a list of contents of the heap in the order it is
         stored internal to the heap.
         (This may be useful for in testing your implementation.)'''
+        return self.heap
+        
     def build_heap(self, alist): #Chris
 
         '''Discards all items in the current heap and builds a heap from 
@@ -59,10 +61,17 @@ class MaxHeap:
         '''this is the maximum number of a entries the heap can hold
         1 less than the number of entries that the array allocated to hold
         the heap can hold'''
-
+        return len(self.heap)
 
     def get_size(self): #Casey
         '''the actual number of elements in the heap, not the capacity'''
+        heap_len = 0
+        for el in self.heap:
+            if self.heap[el] is not None:
+                heap_len += 1
+            else:
+                heap_len += 0
+        return heap_len
 
     def perc_down(self, i): #Chris
         '''where the parameter i is an index in the heap and perc_down
@@ -104,3 +113,7 @@ class MaxHeap:
         new heap using
         the items in alist, then mutate alist to put the items in
         ascending order'''
+        new_heap = self.build_heap(alist)
+        ascending_list = self.selectionSort(new_heap)
+
+        return ascending_list
