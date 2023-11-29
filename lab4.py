@@ -77,19 +77,80 @@ class MaxHeap:
         (This may be useful for in testing your implementation.)'''
         return self.heap
 
-    def build_heap(self, alist):  # Chris
+    # def build_heap(self, alist):  # Chris
+    #     '''Discards all items in the current heap and builds a heap from
+    #     the items in alist using the bottom-up construction method.
+    #     If the capacity of the current heap is less than the number of
+    #     items in alist, the capacity of the heap will be increased to
+    #     accommodate the items in alist'''
+    #     self.heap = [None]*self.size
+        # sortedAList = self.selectionSort(alist)
+        # sortedAList.reverse()
+        # if len(sortedAList) > self.get_capacity():
+        #     self.heap = [None] * len(sortedAList)
+        # for x in sortedAList:
+        #     self.enqueue(x)
+
+    def build_heap(self, alist):
         '''Discards all items in the current heap and builds a heap from
         the items in alist using the bottom-up construction method.
         If the capacity of the current heap is less than the number of
         items in alist, the capacity of the heap will be increased to
         accommodate the items in alist'''
-        self.heap = []
-        sortedAList = self.selectionSort(alist)
-        sortedAList.reverse()
-        if len(sortedAList) > self.get_capacity():
-            self.heap = [None] * len(sortedAList)
-        for x in sortedAList:
-            self.enqueue(x)
+        self.heap = [None] * self.size
+        # Perform bottom-up construction starting from the last non-leaf node
+        for i in range(self._parent_index(len(alist) - 1), -1, -1):
+            self._heapify_down_from_index(i)
+
+    def _heapify_down_from_index(self, index):
+        while self._has_left_child(index):
+            larger_child_index = self._get_larger_child_index(index)
+
+            if self.heap[index] > self.heap[larger_child_index]:
+                break
+            else:
+                self._swap(index, larger_child_index)
+
+            index = larger_child_index
+
+    def _get_larger_child_index(self, index):
+        if not self._has_right_child(index):
+            return self._left_child_index(index)
+        else:
+            if self.heap[self._left_child_index(index)] > self.heap[self._right_child_index(index)]:
+                return self._left_child_index(index)
+            else:
+                return self._right_child_index(index)
+
+    def _has_parent(self, index):
+        return index > 0
+
+    def _has_left_child(self, index):
+        return self._left_child_index(index) < len(self.heap)
+
+    def _has_right_child(self, index):
+        return self._right_child_index(index) < len(self.heap)
+
+    def _parent(self, index):
+        return self.heap[self._parent_index(index)]
+
+    def _left_child(self, index):
+        return self.heap[self._left_child_index(index)]
+
+    def _right_child(self, index):
+        return self.heap[self._right_child_index(index)]
+
+    def _parent_index(self, index):
+        return (index - 1) // 2
+
+    def _left_child_index(self, index):
+        return 2 * index + 1
+
+    def _right_child_index(self, index):
+        return 2 * index + 2
+
+    def _swap(self, i, j):
+        self.heap[i], self.heap[j] = self.heap[j], self.heap[i]
 
     def selectionSort(self, my_list):
         for i, x in enumerate(my_list):
@@ -133,10 +194,10 @@ class MaxHeap:
         elements as it goes.'''
         item = self.heap[i]
         small_index = 0
-        while i < int(self.length / 2):
+        while i < int(self.size / 2):
             left = 2 * i + 1
             right = 2 * i + 2
-            if right < self.length and self.heap[left] < self.heap[right]:
+            if right < self.size and self.heap[left] < self.heap[right]:
                 small_index = right
             else:
                 small_index = left
